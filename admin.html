@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin | Surat Kebenaran</title>
+<link rel="icon" href="semsira.png">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{--ink:#12263f;--mut:#5d6b7e;--line:#dbe1ea;--bg:#eef1f5;--pri:#12315c;--acc:#0d7a5f;--gold:#b58a2f;--red:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 "Public Sans",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--pri);color:#fff;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:5}
+.hd{max-width:1000px;margin:auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.hd img{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:8px;padding:2px}
+.hd h1{font-size:16px;margin:0;line-height:1.2}.hd small{opacity:.8;font-size:12px;display:block}
+.lang{margin-left:auto;display:flex;border:1px solid #ffffff55;border-radius:8px;overflow:hidden}
+.lang button{background:none;border:0;color:#fff;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.lang button.on{background:#fff;color:var(--pri);font-weight:600}
+main{max-width:1000px;margin:auto;padding:20px 16px 60px}
+.top{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch;margin-bottom:20px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 18px;min-width:130px}
+.stat b{font-size:26px;display:block;line-height:1.1;color:var(--pri)}.stat span{color:var(--mut);font-size:13px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 16px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}.btn:focus-visible,.ib:focus-visible,summary:focus-visible{outline:3px solid #7fc4b0;outline-offset:2px}
+.top .btn{margin-left:auto;align-self:center}
+svg.lucide{width:18px;height:18px;flex:none}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;margin-bottom:12px}
+summary{list-style:none;display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;font-weight:600}
+summary::-webkit-details-marker{display:none}summary .n{background:var(--bg);border-radius:20px;padding:0 10px;font-size:13px;color:var(--mut)}
+summary .ch{margin-left:auto;transition:transform .2s}details[open] summary .ch{transform:rotate(180deg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:0 16px 16px}
+.card{border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.card h3{margin:0;font-size:14px;line-height:1.35}.card p{margin:0;color:var(--mut);font-size:13px}
+.lnk{display:flex;gap:6px}.lnk input{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:6px 8px;font:inherit;font-size:12px;background:#f8fafc}
+.act{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.ib{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 9px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink)}
+.ib.d{color:var(--red)}.ib:hover{background:var(--bg)}
+.empty{text-align:center;color:var(--mut);padding:50px 10px;background:#fff;border:1px dashed var(--line);border-radius:10px}
+dialog{border:0;border-radius:12px;padding:0;width:min(560px,94vw);max-height:92vh;color:var(--ink)}
+dialog::backdrop{background:#0b1b3388}
+.dh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);font-weight:700}
+.db{padding:16px 18px;display:grid;gap:12px}
+label{font-size:13px;font-weight:600;display:grid;gap:4px}
+input,textarea{font:inherit;border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
+input:focus,textarea:focus{outline:2px solid var(--acc);border-color:var(--acc)}
+canvas{width:100%;height:auto;border:1px dashed #8a97a8;border-radius:8px;touch-action:none;background:#fff;cursor:crosshair}
+.fr{display:flex;gap:8px;justify-content:flex-end;padding:0 18px 16px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.chip{display:flex;justify-content:space-between;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font:inherit;font-size:13px;cursor:pointer}
+.chip b{color:var(--acc)}.chip.z{opacity:.5}.chip.on{border-color:var(--pri);background:#eaf0f9}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+.tot{font-size:30px;font-weight:700;color:var(--pri)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:99}
+</style>
+</head>
+<body>
+<header><div class="hd">
+<img src="semsira.png" alt="SEMSIRA" onerror="this.style.display='none'">
+<div><h1 data-i="title"></h1><small>SMK Syed Sirajuddin Jejawi, Arau, Perlis</small></div>
+<div class="lang" id="lang"><button data-l="ms">BM</button><button data-l="en">EN</button><button data-l="zh">中文</button></div>
+</div></header>
+<main>
+<div class="top">
+<div class="stat"><b id="sL">0</b><span data-i="letters"></span></div>
+<div class="stat"><b id="sS">0</b><span data-i="subs"></span></div>
+<button class="btn p" id="add"><i data-lucide="plus"></i><span data-i="new"></span></button>
+</div>
+<div id="list"></div>
+</main>
+
+<dialog id="dF"><div class="dh"><span id="fT"></span><button class="ib" data-close><i data-lucide="x"></i></button></div>
+<form id="f"><div class="db">
+<label><span data-i="cat"></span><input name="category" list="cats" required><datalist id="cats"></datalist></label>
+<label><span data-i="program"></span><textarea name="program" rows="2" required></textarea></label>
+<label><span data-i="lokasi"></span><textarea name="lokasi" rows="2" required></textarea></label>
+<label><span data-i="tarikh"></span><input name="tarikh" required></label>
+<label><span data-i="anjuran"></span><textarea name="anjuran" rows="2" required></textarea></label>
+<div><b style="font-size:13px" data-i="sign"></b><canvas id="sig" width="600" height="200"></canvas>
+<button type="button" class="ib" id="clr" style="margin-top:6px"><i data-lucide="eraser"></i><span data-i="clear"></span></button></div>
+</div><div class="fr"><button type="button" class="btn" data-close data-i="cancel"></button><button class="btn p" data-i="save"></button></div></form></dialog>
+
+<dialog id="dS"><div class="dh"><span id="sT"></span><button class="ib" data-close><i data-lucide="x"></i></button></div><div class="db" id="sB"></div></dialog>
+<div id="toast"></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyDJbWYrVvM-ozMPvKRg4SzHnEP4Ihuor28",authDomain:"semsira-sk.firebaseapp.com",projectId:"semsira-sk",storageBucket:"semsira-sk.firebasestorage.app",messagingSenderId:"429615120997",appId:"1:429615120997:web:b7c5e4f0f0c6b85086fc8c"});
+const db=getFirestore(app);
+const CLASSES=["SUMAYYAH","SARAH","KHADIJAH","FATIMAH","ZAINAB","RUQAYYAH","UMMU KALTHOM","AISHAH","AL FARABI","AL GHAZALI","AL KINDI","AL MAWARDI","AL RAZI","IBNU KHALDUN","IBNU RUSH","IBNU SINA"];
+const D={
+ms:{title:"Pengurusan Surat Kebenaran",letters:"Surat",subs:"Jumlah penghantaran",new:"Surat baharu",cat:"Kategori (laci)",program:"Program",lokasi:"Lokasi",tarikh:"Tarikh",anjuran:"Anjuran",sign:"Tandatangan & cop Pengetua (lukis di bawah)",clear:"Padam tandatangan",save:"Simpan",cancel:"Batal",edit:"Edit",del:"Padam",short:"Pendekkan URL",copied:"Pautan disalin",none:"Belum ada surat kebenaran. Tekan \"Surat baharu\" untuk mula.",confirm:"Padam surat ini beserta semua penghantaran?",uncat:"Tanpa kategori",total:"Jumlah penghantaran",byClass:"Mengikut kelas",noSubs:"Tiada penghantaran",newT:"Surat baharu",editT:"Edit surat",needSig:"Sila lukis tandatangan",shortFail:"Gagal memendekkan URL (perlu dihoskan di internet)",saved:"Disimpan",parent:"Ibu bapa",phone:"Telefon",veh:"Kenderaan",yes:"Ya",no:"Tidak",signed:"Tandatangan",ok:"Sudah",nok:"Belum",stud:"Pelajar"},
+en:{title:"Consent Letter Management",letters:"Letters",subs:"Total submissions",new:"New letter",cat:"Category (drawer)",program:"Programme",lokasi:"Location",tarikh:"Date",anjuran:"Organiser",sign:"Principal's signature & stamp (draw below)",clear:"Clear signature",save:"Save",cancel:"Cancel",edit:"Edit",del:"Delete",short:"Shorten URL",copied:"Link copied",none:"No consent letters yet. Press \"New letter\" to begin.",confirm:"Delete this letter and all its submissions?",uncat:"Uncategorised",total:"Total submissions",byClass:"By class",noSubs:"No submissions",newT:"New letter",editT:"Edit letter",needSig:"Please draw the signature",shortFail:"Could not shorten URL (the site must be hosted online)",saved:"Saved",parent:"Parent",phone:"Phone",veh:"Transport",yes:"Yes",no:"No",signed:"Signed",ok:"Yes",nok:"No",stud:"Student"},
+zh:{title:"同意书管理",letters:"同意书",subs:"提交总数",new:"新增同意书",cat:"分类（抽屉）",program:"活动名称",lokasi:"地点",tarikh:"日期",anjuran:"主办单位",sign:"校长签名与印章（在下方手绘）",clear:"清除签名",save:"保存",cancel:"取消",edit:"编辑",del:"删除",short:"缩短网址",copied:"链接已复制",none:"还没有同意书，点击“新增同意书”开始。",confirm:"删除此同意书及其所有提交记录？",uncat:"未分类",total:"提交总数",byClass:"按班级",noSubs:"暂无提交",newT:"新增同意书",editT:"编辑同意书",needSig:"请先手绘签名",shortFail:"缩短网址失败（网站需部署到网络上）",saved:"已保存",parent:"家长",phone:"电话",veh:"交通",yes:"同意",no:"不同意",signed:"签名",ok:"已签",nok:"未签",stud:"学生"}};
+let L=localStorage.getItem("lang")||"ms",letters=[],subs=[],closed=new Set(),editId=null,subId=null,selC=null;
+const $=s=>document.querySelector(s),t=k=>D[L][k]||k,esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const icons=()=>lucide.createIcons();
+const link=id=>new URL("surat_kebenaran.html?id="+id,location.href).href;
+function toast(m){const e=$("#toast");e.textContent=m;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>e.style.display="none",2600)}
+function applyLang(){document.documentElement.lang=L;document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l==L));render();renderSubs()}
+$("#lang").onclick=e=>{const l=e.target.dataset.l;if(l){L=l;localStorage.setItem("lang",l);applyLang()}};
+onSnapshot(collection(db,"letters"),s=>{letters=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds??1e12)-(a.createdAt?.seconds??1e12));render()},e=>toast(e.message));
+onSnapshot(collection(db,"submissions"),s=>{subs=s.docs.map(d=>({id:d.id,...d.data()}));render();renderSubs()},e=>toast(e.message));
+function render(){
+$("#sL").textContent=letters.length;$("#sS").textContent=subs.length;
+$("#cats").innerHTML=[...new Set(letters.map(l=>l.category).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("");
+if(!letters.length){$("#list").innerHTML=`<div class="empty">${t("none")}</div>`;return}
+const g={};letters.forEach(l=>(g[l.category||t("uncat")]??=[]).push(l));
+$("#list").innerHTML=Object.entries(g).map(([c,a])=>`<details data-c="${esc(c)}" ${closed.has(c)?"":"open"}><summary><i data-lucide="folder"></i>${esc(c)}<span class="n">${a.length}</span><i class="ch" data-lucide="chevron-down"></i></summary><div class="grid">${a.map(l=>{
+const u=l.shortUrl||link(l.id),n=subs.filter(s=>s.letterId==l.id).length;
+return`<article class="card"><h3>${esc(l.program)}</h3><p>${esc(l.lokasi)}</p><p>${esc(l.tarikh)}</p>
+<div class="lnk"><input readonly value="${esc(u)}" aria-label="URL"><button class="ib" data-a="copy" data-id="${l.id}" title="Copy"><i data-lucide="copy"></i></button></div>
+<div class="act"><button class="ib" data-a="subs" data-id="${l.id}"><i data-lucide="users"></i>${n}</button>
+<button class="ib" data-a="short" data-id="${l.id}" ${l.shortUrl?"disabled":""}><i data-lucide="link-2"></i>${t("short")}</button>
+<button class="ib" data-a="edit" data-id="${l.id}"><i data-lucide="pencil"></i>${t("edit")}</button>
+<button class="ib d" data-a="del" data-id="${l.id}" aria-label="${t("del")}"><i data-lucide="trash-2"></i></button></div></article>`}).join("")}</div></details>`).join("");
+icons()}
+$("#list").addEventListener("toggle",e=>{const d=e.target;if(d.dataset.c)d.open?closed.delete(d.dataset.c):closed.add(d.dataset.c)},true);
+$("#list").onclick=async e=>{const b=e.target.closest("[data-a]");if(!b)return;const l=letters.find(x=>x.id==b.dataset.id),a=b.dataset.a;
+if(a=="copy"){await navigator.clipboard.writeText(l.shortUrl||link(l.id));toast(t("copied"))}
+if(a=="edit")openForm(l);
+if(a=="subs"){subId=l.id;selC=null;renderSubs();$("#dS").showModal()}
+if(a=="del"&&confirm(t("confirm"))){await Promise.all([deleteDoc(doc(db,"letters",l.id)),...subs.filter(s=>s.letterId==l.id).map(s=>deleteDoc(doc(db,"submissions",s.id)))])}
+if(a=="short"){b.disabled=true;try{const r=await fetch("https://is.gd/create.php?format=json&url="+encodeURIComponent(link(l.id)));const j=await r.json();if(!j.shorturl)throw 0;await updateDoc(doc(db,"letters",l.id),{shortUrl:j.shorturl})}catch{toast(t("shortFail"));b.disabled=false}}};
+function renderSubs(){const d=$("#dS");if(!d.open)return;const l=letters.find(x=>x.id==subId);if(!l){d.close();return}
+const a=subs.filter(s=>s.letterId==subId);$("#sT").textContent=l.program;
+const sel=a.filter(s=>s.kelas==selC).sort((x,y)=>x.student.localeCompare(y.student));
+$("#sB").innerHTML=`<div><span style="color:var(--mut)">${t("total")}</span><div class="tot">${a.length}</div></div><b>${t("byClass")}</b>
+<div class="chips">${CLASSES.map(c=>{const n=a.filter(s=>s.kelas==c).length;return`<button class="chip ${n?"":"z"} ${c==selC?"on":""}" data-c="${c}"><span>${c}</span><b>${n}</b></button>`}).join("")}</div>
+${selC?(sel.length?`<table><tr><th>${t("stud")}</th><th>${t("parent")}</th><th>${t("phone")}</th><th>${t("veh")}</th><th>${t("signed")}</th></tr>${sel.map(s=>`<tr><td>${esc(s.student)}</td><td>${esc(s.parent)}</td><td>${esc(s.phone)}</td><td>${s.vehicle?t("yes"):t("no")}</td><td>${s.signed?t("ok"):t("nok")}</td></tr>`).join("")}</table>`:`<p style="color:var(--mut)">${t("noSubs")}</p>`):""}`}
+$("#sB").onclick=e=>{const c=e.target.closest("[data-c]");if(c){selC=selC==c.dataset.c?null:c.dataset.c;renderSubs()}};
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>b.closest("dialog").close());
+const cv=$("#sig"),cx=cv.getContext("2d");let drawn=false,pen=false;cx.lineWidth=3.5;cx.lineCap=cx.lineJoin="round";cx.strokeStyle="#0b1f44";
+const pt=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+cv.onpointerdown=e=>{pen=true;cv.setPointerCapture(e.pointerId);cx.beginPath();cx.moveTo(...pt(e))};
+cv.onpointermove=e=>{if(pen){cx.lineTo(...pt(e));cx.stroke();drawn=true}};cv.onpointerup=cv.onpointercancel=()=>pen=false;
+$("#clr").onclick=()=>{cx.clearRect(0,0,cv.width,cv.height);drawn=false};
+const DEF={program:"KARNIVAL SUKAN TINGKATAN ENAM PERINGKAT NEGERI",lokasi:"KOMPLEKS SUKAN TSP KANGAR, SMK TENGKU SULEIMAN, D'FUTSAL BATU 2 & SMK SYED HASSAN",tarikh:"14, 15, 17 & 18 SEPTEMBER 2026 (ISNIN, SELASA, KHAMIS & JUMAAT)",anjuran:"JABATAN PENDIDIKAN NEGERI PERLIS DENGAN KERJASAMA UNIT KOKURIKULUM TINGKATAN ENAM NEGERI PERLIS"};
+function openForm(l){editId=l?.id||null;$("#fT").textContent=t(l?"editT":"newT");const f=$("#f"),v=l||DEF;
+["category","program","lokasi","tarikh","anjuran"].forEach(k=>f[k].value=v[k]||"");
+cx.clearRect(0,0,cv.width,cv.height);drawn=false;$("#dF").showModal();
+if(l?.signature){const i=new Image();i.onload=()=>{cx.drawImage(i,0,0);drawn=true};i.src=l.signature}}
+$("#add").onclick=()=>openForm();
+$("#f").onsubmit=async e=>{e.preventDefault();if(!drawn)return toast(t("needSig"));const f=e.target;
+const data={signature:cv.toDataURL("image/png")};["category","program","lokasi","tarikh","anjuran"].forEach(k=>data[k]=f[k].value.trim());
+try{editId?await updateDoc(doc(db,"letters",editId),data):await addDoc(collection(db,"letters"),{...data,createdAt:serverTimestamp()});$("#dF").close();toast(t("saved"))}catch(err){toast(err.message)}};
+applyLang();icons();
+</script>
+</body>
+</html>
