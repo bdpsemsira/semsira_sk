@@ -28,6 +28,7 @@ svg.lucide{width:18px;height:18px;flex:none}
 .bl{display:inline-block;min-width:90px;border-bottom:1px dotted #333;font-weight:700;padding:0 4px;text-align:left;font-family:"Public Sans",sans-serif;font-size:14px}
 .ft{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px;font-size:15px;text-align:left}
 .ft img{max-width:180px;max-height:80px;display:block}
+.ft .psig{max-width:180px;max-height:80px;display:block;border-bottom:1px dotted #333;min-height:50px}
 .sg{display:flex;align-items:center;gap:6px;color:var(--acc);font-weight:600;font-family:"Public Sans",sans-serif;font-size:14px}
 .form{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px}
 .form h2{margin:0;font-size:17px}
@@ -42,9 +43,16 @@ input:focus,select:focus{outline:2px solid var(--acc);border-color:var(--acc)}
 .chk input{width:20px;height:20px;accent-color:var(--acc)}
 .btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border:0;background:var(--acc);color:#fff;padding:13px 18px;border-radius:8px;font:inherit;font-weight:600;font-size:16px;cursor:pointer}
 .btn:disabled{opacity:.6}.btn:focus-visible{outline:3px solid #7fc4b0;outline-offset:2px}
+.ib{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:6px;padding:8px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.ib:hover{background:var(--bg)}
 .msg{text-align:center;padding:50px 20px;background:#fff;border:1px solid var(--line);border-radius:10px}
 .msg svg{width:52px;height:52px;color:var(--acc)}.msg.e svg{color:var(--red)}
 #err{color:var(--red);font-size:13px;min-height:1em}
+canvas{width:100%;height:auto;border:1px dashed #8a97a8;border-radius:8px;touch-action:none;background:#fff;cursor:crosshair}
+.sigwrap{display:grid;gap:8px;border:1px solid var(--line);border-radius:8px;padding:12px;background:#f8fafc}
+.sigwrap b{font-size:13px}
+.sigwrap small{color:var(--mut);font-size:12px}
+.legal{margin:0;font-size:12.5px;line-height:1.6;color:var(--mut);background:#fff7e6;border:1px solid #f0d9a8;border-left:4px solid var(--gold);border-radius:6px;padding:10px 12px;text-align:justify}
 @media(max-width:560px){.row,.ft{grid-template-columns:1fr}.paper{font-size:15px;text-align:left}}
 @media print{header,.form{display:none}}
 </style>
@@ -53,7 +61,7 @@ input:focus,select:focus{outline:2px solid var(--acc);border-color:var(--acc)}
 <header><div class="hd">
 <img src="semsira.png" alt="SEMSIRA" onerror="this.style.display='none'">
 <div><b>SMK Syed Sirajuddin Jejawi</b><small>02600 Arau, Perlis</small></div>
-<div class="lang" id="lang"><button data-l="ms">BM</button><button data-l="en">EN</button><button data-l="zh">中文</button></div>
+<div class="lang" id="lang"><button data-l="ms">BM</button><button data-l="en">EN</button></div>
 </div></header>
 <main id="app"></main>
 
@@ -70,7 +78,9 @@ p3:"Saya sedar tentang risiko yang dihadapi dan faham bahawa pihak Kementerian P
 p4:"Saya akan menasihati dan mengingatkan anak jagaan saya supaya patuh kepada arahan yang diberi oleh pegawai-pegawai yang bertanggungjawab / Guru Pengiring bagi program ini.",
 f1:"Tandatangan ibu bapa / penjaga",f2:"Nama",f3:"No. Telefon ibu bapa / penjaga",f4:"Tarikh",f5:"Tandatangan & Cop Pengetua",sd:"Telah ditandatangani",
 ft:"Maklumat ibu bapa / penjaga",lp:"Nama ibu bapa / penjaga",li:"No. Kad Pengenalan ibu bapa / penjaga",ls:"Nama pelajar",lk:"Tingkatan / Kelas",lc:"Pilih kelas",lic:"No. Kad Pengenalan / Surat Lahir pelajar",lv:"Kenderaan guru / bas",lph:"No. Telefon",ld:"Tarikh",sg:"Saya telah menandatangani surat ini (tandatangan ibu bapa / penjaga)",send:"Hantar",sending:"Menghantar...",
-ok:"Terima kasih",okt:"Surat kebenaran anda telah dihantar.",again:"Hantar untuk anak lain",nf:"Surat tidak dijumpai",nft:"Sila semak pautan atau hubungi pihak sekolah.",req:"Sila lengkapkan semua ruangan.",fail:"Gagal menghantar. Cuba lagi."},
+ok:"Terima kasih",okt:"Surat kebenaran anda telah dihantar.",again:"Hantar untuk anak lain",nf:"Surat tidak dijumpai",nft:"Sila semak pautan atau hubungi pihak sekolah.",req:"Sila lengkapkan semua ruangan.",fail:"Gagal menghantar. Cuba lagi.",
+sigT:"Tandatangan ibu bapa / penjaga (lukis di bawah)",sigClear:"Padam tandatangan",sigSaved:"Tandatangan disimpan sementara pada peranti ini (1 bulan).",sigNeed:"Sila lukis tandatangan ibu bapa / penjaga.",sigRestored:"Tandatangan terdahulu dipulihkan.",sigExpire:"Tandatangan sementara ini akan tamat pada",
+sigLegal:"Dengan menandatangani secara elektronik di atas, saya mengesahkan bahawa tandatangan elektronik ini adalah sah dan mempunyai kesan undang-undang yang sama seperti tandatangan basah / fizikal saya, dan saya bersetuju dengan segala kandungan surat ini."},
 en:{h:"PARENT / GUARDIAN DECLARATION AND CONSENT LETTER",sch:["Syed Sirajuddin Jejawi National Secondary School","02600, Arau, Perlis"],
 p1:v=>`I, ${v.parent}, (IC No. ${v.icP}) parent / guardian of ${v.student}, Form: ${v.kelas}, IC No. / Birth Certificate No. ${v.icS}, hereby declare that I give permission for my ward named above to take part in the programme <b>${v.program}</b> held at <b>${v.lokasi}</b> on <b>${v.tarikh}</b>, organised by <b>${v.anjuran}</b>.`,
 p2:v=>`I also ${v.veh} my ward to travel in a teacher's vehicle / bus to and from the programme where necessary.`,vy:"permit",vn:"do not permit",vq:"* permit / do not permit",
@@ -78,24 +88,49 @@ p3:"I am aware of the risks involved and understand that the Ministry of Educati
 p4:"I will advise and remind my ward to obey the instructions given by the responsible officers / accompanying teachers for this programme.",
 f1:"Parent / guardian signature",f2:"Name",f3:"Parent / guardian phone no.",f4:"Date",f5:"Principal's signature & stamp",sd:"Signed",
 ft:"Parent / guardian details",lp:"Parent / guardian name",li:"Parent / guardian IC no.",ls:"Student name",lk:"Form / Class",lc:"Select class",lic:"Student IC / Birth Certificate no.",lv:"Teacher's vehicle / bus",lph:"Phone no.",ld:"Date",sg:"I have signed this letter (parent / guardian signature)",send:"Submit",sending:"Submitting...",
-ok:"Thank you",okt:"Your consent letter has been submitted.",again:"Submit for another child",nf:"Letter not found",nft:"Please check the link or contact the school.",req:"Please complete all fields.",fail:"Could not submit. Please try again."},
-zh:{h:"家长／监护人声明及同意书",sch:["Syed Sirajuddin Jejawi 国民中学","02600, Arau, Perlis"],
-p1:v=>`本人 ${v.parent}（身份证号码 ${v.icP}），为学生 ${v.student}（${v.kelas}班）（身份证／出生证号码 ${v.icS}）之家长／监护人，特此声明同意上述学生参加由 <b>${v.anjuran}</b> 主办、于 <b>${v.tarikh}</b> 在 <b>${v.lokasi}</b> 举行的 <b>${v.program}</b>。`,
-p2:v=>`本人亦${v.veh}上述学生在往返该活动途中，如有需要乘搭教师车辆／巴士。`,vy:"同意",vn:"不同意",vq:"* 同意 / 不同意",
-p3:"本人明白活动所涉及的风险，并了解马来西亚教育部／州教育局／学校将采取必要及适当的措施，确保学生在参加此活动期间的安全。",
-p4:"本人将劝导并提醒上述学生遵守本活动负责官员／带队教师所发出的指示。",
-f1:"家长／监护人签名",f2:"姓名",f3:"家长／监护人电话",f4:"日期",f5:"校长签名与印章",sd:"已签名",
-ft:"家长／监护人资料",lp:"家长／监护人姓名",li:"家长／监护人身份证号码",ls:"学生姓名",lk:"班级",lc:"选择班级",lic:"学生身份证／出生证号码",lv:"教师车辆／巴士",lph:"电话号码",ld:"日期",sg:"我已在此同意书上签名（家长／监护人签名）",send:"提交",sending:"提交中...",
-ok:"谢谢",okt:"您的同意书已提交。",again:"为其他孩子提交",nf:"找不到同意书",nft:"请检查链接或联系学校。",req:"请填写所有栏目。",fail:"提交失败，请重试。"}};
-let L=localStorage.getItem("lang")||"ms",letter=null,V={parent:"",icP:"",student:"",kelas:"",icS:"",phone:"",veh:null,signed:false,date:new Date().toISOString().slice(0,10)},state="load";
+ok:"Thank you",okt:"Your consent letter has been submitted.",again:"Submit for another child",nf:"Letter not found",nft:"Please check the link or contact the school.",req:"Please complete all fields.",fail:"Could not submit. Please try again.",
+sigT:"Parent / guardian signature (draw below)",sigClear:"Clear signature",sigSaved:"Signature temporarily saved on this device (1 month).",sigNeed:"Please draw the parent / guardian signature.",sigRestored:"Previous signature restored.",sigExpire:"This temporary signature expires on",
+sigLegal:"By signing electronically above, I confirm that this electronic signature is valid and carries the same legal effect as my wet / physical signature, and I agree to all the contents of this letter."}
+};
+let L=localStorage.getItem("lang")||"ms";if(!D[L])L="ms";
+let letter=null,V={parent:"",icP:"",student:"",kelas:"",icS:"",phone:"",veh:null,signed:false,date:new Date().toISOString().slice(0,10)},state="load";
 const id=new URLSearchParams(location.search).get("id"),$=s=>document.querySelector(s),t=k=>D[L][k];
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const bl=x=>`<span class="bl">${esc(x)||"&nbsp;"}</span>`;
-function vals(){const q=L=="zh"?D.zh:D[L];return{parent:bl(V.parent),icP:bl(V.icP),student:bl(V.student),kelas:bl(V.kelas),icS:bl(V.icS),program:esc(letter.program),lokasi:esc(letter.lokasi),tarikh:esc(letter.tarikh),anjuran:esc(letter.anjuran),veh:V.veh===null?t("vq"):V.veh?t("vy"):t("vn")}}
-function paper(){const v=vals(),s=D[L].sch;return`<section class="paper" id="paper"><div class="sch"><img src="semsira.png" alt="" onerror="this.style.display='none'"><div>${s[0]}<br>${s[1]}</div></div>
+
+/* ---------- 签名缓存（localStorage，1 个月过期，不上传 Firebase） ---------- */
+const SIG_KEY="semsira_parent_signature";
+const SIG_TTL_MS=30*24*60*60*1000; // 1 个月
+function sigLoad(){
+  try{
+    const raw=localStorage.getItem(SIG_KEY);
+    if(!raw) return null;
+    const o=JSON.parse(raw);
+    if(!o||!o.data||!o.ts) return null;
+    if(Date.now()-o.ts>SIG_TTL_MS){localStorage.removeItem(SIG_KEY);return null}
+    return o;
+  }catch{return null}
+}
+function sigSave(dataUrl){
+  try{localStorage.setItem(SIG_KEY,JSON.stringify({data:dataUrl,ts:Date.now()}))}catch{}
+}
+function sigClear(){try{localStorage.removeItem(SIG_KEY)}catch{}}
+function sigExpiryText(ts){try{return new Date(ts+SIG_TTL_MS).toLocaleDateString()}catch{return ""}}
+
+function vals(){return{parent:bl(V.parent),icP:bl(V.icP),student:bl(V.student),kelas:bl(V.kelas),icS:bl(V.icS),program:esc(letter.program),lokasi:esc(letter.lokasi),tarikh:esc(letter.tarikh),anjuran:esc(letter.anjuran),veh:V.veh===null?t("vq"):V.veh?t("vy"):t("vn")}}
+
+function paper(){
+  const v=vals(),s=D[L].sch;
+  const cached=sigLoad();
+  const sigBlock=V.signed
+    ? (cached?`<img src="${cached.data}" alt="${esc(t("f1"))}" style="max-width:180px;max-height:80px;display:block">`
+              :`<div class="sg"><i data-lucide="check-circle-2"></i>${t("sd")}</div>`)
+    : bl("");
+  return`<section class="paper" id="paper"><div class="sch"><img src="semsira.png" alt="" onerror="this.style.display='none'"><div>${s[0]}<br>${s[1]}</div></div>
 <h1>${t("h")}</h1><p>${t("p1")(v)}</p><p>${t("p2")(v)}</p><p>${t("p3")}</p><p>${t("p4")}</p>
-<div class="ft"><div>${t("f1")} : ${V.signed?`<div class="sg"><i data-lucide="check-circle-2"></i>${t("sd")}</div>`:bl("")}<br>${t("f2")} : ${bl(V.parent)}<br>${t("f3")} : ${bl(V.phone)}<br>${t("f4")} : ${bl(V.date)}</div>
+<div class="ft"><div>${t("f1")} : ${sigBlock}<br>${t("f2")} : ${bl(V.parent)}<br>${t("f3")} : ${bl(V.phone)}<br>${t("f4")} : ${bl(V.date)}</div>
 <div>${t("f5")} :<br><img src="${letter.signature}" alt=""></div></div></section>`}
+
 function formHtml(){return`<form class="form" id="f" novalidate><h2>${t("ft")}</h2>
 <label>${t("lp")}<input name="parent" autocomplete="name" value="${esc(V.parent)}" required></label>
 <label>${t("li")}<input name="icP" inputmode="numeric" value="${esc(V.icP)}" required></label>
@@ -105,26 +140,118 @@ function formHtml(){return`<form class="form" id="f" novalidate><h2>${t("ft")}</
 <div><b style="font-size:13px">${t("lv")}</b><div class="opt"><label><input type="radio" name="veh" value="1" ${V.veh===true?"checked":""}>${t("vy")}</label><label><input type="radio" name="veh" value="0" ${V.veh===false?"checked":""}>${t("vn")}</label></div></div>
 <div class="row"><label>${t("lph")}<input name="phone" type="tel" autocomplete="tel" value="${esc(V.phone)}" required></label>
 <label>${t("ld")}<input name="date" type="date" value="${V.date}" required></label></div>
+<div class="sigwrap">
+  <b>${t("sigT")}</b>
+  <canvas id="sig" width="600" height="200"></canvas>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <button type="button" class="ib" id="sigClr"><i data-lucide="eraser"></i>${t("sigClear")}</button>
+    <small id="sigHint">${t("sigSaved")}</small>
+  </div>
+</div>
+<p class="legal">${t("sigLegal")}</p>
 <label class="chk"><input type="checkbox" name="signed" ${V.signed?"checked":""}>${t("sg")}</label>
 <div id="err"></div><button class="btn" id="go"><i data-lucide="send"></i>${t("send")}</button></form>`}
-function draw(){const a=$("#app");document.documentElement.lang=L;
-document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l==L));
-if(state=="load")a.innerHTML="";
-else if(state=="nf")a.innerHTML=`<div class="msg e"><i data-lucide="file-x"></i><h2>${t("nf")}</h2><p>${t("nft")}</p></div>`;
-else if(state=="ok")a.innerHTML=`<div class="msg"><i data-lucide="check-circle-2"></i><h2>${t("ok")}</h2><p>${t("okt")}</p><button class="btn" id="again">${t("again")}</button></div>`;
-else{a.innerHTML=paper()+formHtml();bind()}
-lucide.createIcons();const b=$("#again");if(b)b.onclick=()=>{V={...V,student:"",kelas:"",icS:"",veh:null,signed:false};state="form";draw();scrollTo(0,0)}}
-function bind(){const f=$("#f");
-f.oninput=f.onchange=e=>{const n=e.target.name,x=e.target;V[n]=n=="veh"?x.value=="1":n=="signed"?x.checked:x.value;
-const keep=document.activeElement;$("#paper").outerHTML=paper();lucide.createIcons();if(keep)keep.focus()};
-f.onsubmit=async e=>{e.preventDefault();const r=[V.parent,V.icP,V.student,V.kelas,V.icS,V.phone,V.date];
-if(r.some(x=>!String(x).trim())||V.veh===null){$("#err").textContent=t("req");return}
-const g=$("#go");g.disabled=true;g.textContent=t("sending");
-try{await addDoc(collection(db,"submissions"),{letterId:id,program:letter.program,parent:V.parent.trim(),icParent:V.icP.trim(),student:V.student.trim(),kelas:V.kelas,icStudent:V.icS.trim(),phone:V.phone.trim(),vehicle:V.veh,signed:V.signed,date:V.date,createdAt:serverTimestamp()});state="ok";draw();scrollTo(0,0)}
-catch{$("#err").textContent=t("fail");g.disabled=false;g.textContent=t("send")}}}
-$("#lang").onclick=e=>{const l=e.target.dataset.l;if(l){L=l;localStorage.setItem("lang",l);const a=document.activeElement,n=a&&a.name,p=a&&a.selectionStart;draw();if(n&&$("#f")){const el=$("#f")[n];el&&el.focus&&el.focus()}}};
+
+/* ---------- 签名画布逻辑 ---------- */
+let cv=null,cx=null,drawn=false,pen=false;
+function initCanvas(){
+  cv=$("#sig");if(!cv)return;
+  cx=cv.getContext("2d");
+  cx.lineWidth=3.5;cx.lineCap=cx.lineJoin="round";cx.strokeStyle="#0b1f44";
+  const pt=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+  cv.onpointerdown=e=>{pen=true;cv.setPointerCapture(e.pointerId);cx.beginPath();cx.moveTo(...pt(e))};
+  cv.onpointermove=e=>{if(pen){cx.lineTo(...pt(e));cx.stroke();drawn=true;V.signed=true;const c=$("#f")&&$("#f").signed;if(c)c.checked=true}};
+  cv.onpointerup=cv.onpointercancel=()=>{if(pen){pen=false;persistSig()}};
+  const cached=sigLoad();
+  if(cached){
+    const i=new Image();
+    i.onload=()=>{cx.drawImage(i,0,0);drawn=true;V.signed=true;
+      const c=$("#f")&&$("#f").signed;if(c)c.checked=true;
+      const h=$("#sigHint");if(h)h.textContent=t("sigRestored")+" · "+t("sigExpire")+" "+sigExpiryText(cached.ts);
+      $("#paper")&&($("#paper").outerHTML=paper());lucide.createIcons();
+    };
+    i.src=cached.data;
+  }
+  $("#sigClr").onclick=()=>{
+    cx.clearRect(0,0,cv.width,cv.height);
+    drawn=false;V.signed=false;
+    const c=$("#f")&&$("#f").signed;if(c)c.checked=false;
+    sigClear();
+    const h=$("#sigHint");if(h)h.textContent=t("sigSaved");
+    $("#paper")&&($("#paper").outerHTML=paper());lucide.createIcons();
+  };
+}
+function persistSig(){
+  if(!cv||!drawn)return;
+  try{
+    const data=cv.toDataURL("image/png");
+    sigSave(data);
+    const h=$("#sigHint");if(h)h.textContent=t("sigSaved")+" · "+t("sigExpire")+" "+sigExpiryText(Date.now());
+    $("#paper")&&($("#paper").outerHTML=paper());lucide.createIcons();
+  }catch{}
+}
+
+function draw(){
+  const a=$("#app");document.documentElement.lang=L;
+  document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l==L));
+  if(state=="load")a.innerHTML="";
+  else if(state=="nf")a.innerHTML=`<div class="msg e"><i data-lucide="file-x"></i><h2>${t("nf")}</h2><p>${t("nft")}</p></div>`;
+  else if(state=="ok")a.innerHTML=`<div class="msg"><i data-lucide="check-circle-2"></i><h2>${t("ok")}</h2><p>${t("okt")}</p><button class="btn" id="again">${t("again")}</button></div>`;
+  else{a.innerHTML=paper()+formHtml();bind();initCanvas()}
+  lucide.createIcons();
+  const b=$("#again");
+  if(b)b.onclick=()=>{V={...V,student:"",kelas:"",icS:"",veh:null,signed:!!sigLoad()};state="form";draw();scrollTo(0,0)};
+}
+
+function bind(){
+  const f=$("#f");
+  f.oninput=f.onchange=e=>{
+    const n=e.target.name,x=e.target;
+    V[n]=n=="veh"?x.value=="1":n=="signed"?x.checked:x.value;
+    if(n=="signed"&&x.checked&&!sigLoad()&&!(cv&&drawn)){V.signed=false;x.checked=false;return}
+    const keep=document.activeElement;
+    $("#paper").outerHTML=paper();
+    lucide.createIcons();
+    if(keep)keep.focus();
+  };
+  f.onsubmit=async e=>{
+    e.preventDefault();
+    const r=[V.parent,V.icP,V.student,V.kelas,V.icS,V.phone,V.date];
+    if(r.some(x=>!String(x).trim())||V.veh===null){$("#err").textContent=t("req");return}
+    if(!V.signed||(!sigLoad()&&!(cv&&drawn))){$("#err").textContent=t("sigNeed");return}
+    const g=$("#go");g.disabled=true;g.textContent=t("sending");
+    try{
+      await addDoc(collection(db,"submissions"),{
+        letterId:id,program:letter.program,
+        parent:V.parent.trim(),icParent:V.icP.trim(),
+        student:V.student.trim(),kelas:V.kelas,
+        icStudent:V.icS.trim(),phone:V.phone.trim(),
+        vehicle:V.veh,signed:V.signed,date:V.date,
+        agreeEsign:true,
+        createdAt:serverTimestamp()
+      });
+      state="ok";draw();scrollTo(0,0);
+    }catch{
+      $("#err").textContent=t("fail");g.disabled=false;g.textContent=t("send");
+    }
+  };
+}
+
+$("#lang").onclick=e=>{
+  const l=e.target.dataset.l;
+  if(l&&D[l]){L=l;localStorage.setItem("lang",l);
+    const a=document.activeElement,n=a&&a.name;
+    draw();
+    if(n&&$("#f")){const el=$("#f")[n];el&&el.focus&&el.focus()}
+  }
+};
+
 draw();
-try{const s=id&&await getDoc(doc(db,"letters",id));if(s&&s.exists()){letter=s.data();state="form"}else state="nf"}catch{state="nf"}
+try{
+  const s=id&&await getDoc(doc(db,"letters",id));
+  if(s&&s.exists()){letter=s.data();state="form"}
+  else state="nf";
+}catch{state="nf"}
 draw();
 </script>
 </body>
