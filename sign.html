@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tandatangan Pengetua | Surat Kebenaran</title>
+<link rel="icon" href="semsira.png">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{--ink:#12263f;--mut:#5d6b7e;--line:#dbe1ea;--bg:#eef1f5;--pri:#12315c;--acc:#0d7a5f;--gold:#b58a2f;--red:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 "Public Sans",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--pri);color:#fff;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:5}
+.hd{max-width:820px;margin:auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.hd img{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:8px;padding:2px}
+.hd b{font-size:14px;line-height:1.2;display:block}.hd small{opacity:.8;font-size:12px}
+.lang{margin-left:auto;display:flex;border:1px solid #ffffff55;border-radius:8px;overflow:hidden;flex:none}
+.lang button{background:none;border:0;color:#fff;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.lang button.on{background:#fff;color:var(--pri);font-weight:600}
+main{max-width:820px;margin:auto;padding:20px 12px 60px;display:grid;gap:18px}
+svg.lucide{width:18px;height:18px;flex:none}
+.paper{background:#fff;border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:4px;padding:28px clamp(16px,5vw,48px);font-family:"Source Serif 4",Georgia,serif;font-size:16px;line-height:1.75;text-align:justify}
+.sch{display:flex;gap:14px;align-items:center;justify-content:center;text-align:center;margin-bottom:14px}
+.sch img{width:64px}.sch div{font-weight:700;font-size:15px;line-height:1.35}
+.paper h1{font-size:17px;text-align:center;margin:14px 0 18px;text-decoration:underline;text-underline-offset:4px}
+.paper p{margin:0 0 12px}
+.bl{display:inline-block;min-width:90px;border-bottom:1px dotted #333;font-weight:700;padding:0 4px;text-align:left;font-family:"Public Sans",sans-serif;font-size:14px}
+.ft{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px;font-size:15px;text-align:left}
+.ft img{max-width:180px;max-height:80px;display:block}
+.ft .blank{min-height:60px}
+.form{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px}
+.form h2{margin:0;font-size:17px}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border:0;background:var(--acc);color:#fff;padding:13px 18px;border-radius:8px;font:inherit;font-weight:600;font-size:16px;cursor:pointer}
+.btn:disabled{opacity:.6}
+.ib{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:6px;padding:8px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.ib:hover{background:var(--bg)}
+canvas{width:100%;height:auto;border:1px dashed #8a97a8;border-radius:8px;touch-action:none;background:#fff;cursor:crosshair}
+.sigbox{display:grid;gap:8px}
+.sigbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sigbar .file{position:relative;overflow:hidden;display:inline-flex}
+.sigbar .file input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.chopPrev{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut);min-height:20px}
+.chopPrev img{max-height:40px;max-width:80px;object-fit:contain;border:1px solid var(--line);border-radius:4px;background:#fff;padding:2px}
+.msg{text-align:center;padding:50px 20px;background:#fff;border:1px solid var(--line);border-radius:10px}
+.msg svg{width:52px;height:52px;color:var(--acc)}.msg.e svg{color:var(--red)}
+#err{color:var(--red);font-size:13px;min-height:1em}
+@media(max-width:560px){.ft{grid-template-columns:1fr}.paper{font-size:15px;text-align:left}}
+@media print{header,.form{display:none}}
+</style>
+</head>
+<body>
+<header><div class="hd">
+<img src="semsira.png" alt="SEMSIRA" onerror="this.style.display='none'">
+<div><b>SMK Syed Sirajuddin Jejawi</b><small>02600 Arau, Perlis</small></div>
+<div class="lang" id="lang"><button data-l="ms">BM</button><button data-l="en">EN</button></div>
+</div></header>
+<main id="app"></main>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getFirestore,doc,getDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const db=getFirestore(initializeApp({apiKey:"AIzaSyDJbWYrVvM-ozMPvKRg4SzHnEP4Ihuor28",authDomain:"semsira-sk.firebaseapp.com",projectId:"semsira-sk",storageBucket:"semsira-sk.firebasestorage.app",messagingSenderId:"429615120997",appId:"1:429615120997:web:b7c5e4f0f0c6b85086fc8c"}));
+
+const D={
+ms:{h:"SURAT AKUAN DAN KEBENARAN IBU BAPA / PENJAGA",sch:["Sekolah Menengah Kebangsaan Syed Sirajuddin Jejawi","02600, Arau, Perlis"],
+p1:v=>`Adalah saya ${v.parent} ibu bapa / penjaga kepada, Nombor Kad Pengenalan ${v.icP}, anak yang bernama ${v.student} Tingkatan : ${v.kelas}, Nombor Kad Pengenalan / Surat Lahir ${v.icS} dengan ini memberi pengakuan bahawa saya membenarkan anak jagaan saya seperti di atas menyertai program <b>${v.program}</b> bertempat di <b>${v.lokasi}</b> yang akan diadakan pada <b>${v.tarikh}</b> anjuran <b>${v.anjuran}</b>.`,
+p2:v=>`Saya juga ${v.veh} anak jagaan saya menaiki kenderaan guru / bas semasa pergi dan pulang dari menghadiri program yang berkenaan sekiranya berkeperluan.`,vq:"* membenarkan / tidak membenarkan",
+p3:"Saya sedar tentang risiko yang dihadapi dan faham bahawa pihak Kementerian Pendidikan Malaysia / Jabatan Pendidikan Negeri / Sekolah akan mengambil tindakan yang perlu dan wajar bagi memastikan keselamatan pelajar-pelajar semasa mengikuti program ini.",
+p4:"Saya akan menasihati dan mengingatkan anak jagaan saya supaya patuh kepada arahan yang diberi oleh pegawai-pegawai yang bertanggungjawab / Guru Pengiring bagi program ini.",
+f1:"Tandatangan ibu bapa / penjaga",f2:"Nama",f3:"No. Telefon ibu bapa / penjaga",f4:"Tarikh",f5:"Tandatangan & Cop Pengetua",
+title:"Tandatangan & Cop Pengetua",sub:"Sila tandatangani dan muat naik cop Pengetua untuk surat kebenaran di bawah.",
+sigT:"Tandatangan Pengetua (lukis di bawah)",chop:"Muat naik cop (PNG)",chopClr:"Buang cop",clear:"Padam tandatangan",chopBad:"Sila pilih fail PNG sahaja",chopLoaded:"Cop dimuatkan",
+send:"Hantar tandatangan",sending:"Menghantar...",needSig:"Sila lukis tandatangan atau muat naik cop",
+ok:"Terima kasih",okt:"Tandatangan telah dihantar. Surat akan dipaparkan dalam sistem admin secara automatik.",
+nf:"Surat tidak dijumpai",nft:"Sila semak pautan atau hubungi pihak sekolah.",done:"Surat ini telah ditandatangani.",fail:"Gagal menghantar. Cuba lagi.",legal:"Dengan menandatangani secara elektronik di atas, saya mengesahkan bahawa tandatangan elektronik ini adalah sah dan mempunyai kesan undang-undang yang sama seperti tandatangan basah / fizikal saya."},
+en:{h:"PARENT / GUARDIAN DECLARATION AND CONSENT LETTER",sch:["Syed Sirajuddin Jejawi National Secondary School","02600, Arau, Perlis"],
+p1:v=>`I, ${v.parent}, (IC No. ${v.icP}) parent / guardian of ${v.student}, Form: ${v.kelas}, IC No. / Birth Certificate No. ${v.icS}, hereby declare that I give permission for my ward named above to take part in the programme <b>${v.program}</b> held at <b>${v.lokasi}</b> on <b>${v.tarikh}</b>, organised by <b>${v.anjuran}</b>.`,
+p2:v=>`I also ${v.veh} my ward to travel in a teacher's vehicle / bus to and from the programme where necessary.`,vq:"* permit / do not permit",
+p3:"I am aware of the risks involved and understand that the Ministry of Education Malaysia / State Education Department / School will take the necessary and appropriate action to ensure the safety of students during this programme.",
+p4:"I will advise and remind my ward to obey the instructions given by the responsible officers / accompanying teachers for this programme.",
+f1:"Parent / guardian signature",f2:"Name",f3:"Parent / guardian phone no.",f4:"Date",f5:"Principal's signature & stamp",
+title:"Principal's Signature & Stamp",sub:"Please sign and upload the Principal's stamp for the consent letter below.",
+sigT:"Principal's signature (draw below)",chop:"Upload stamp (PNG)",chopClr:"Remove stamp",clear:"Clear signature",chopBad:"Please choose a valid PNG file",chopLoaded:"Stamp loaded",
+send:"Submit signature",sending:"Submitting...",needSig:"Please draw the signature or upload a stamp",
+ok:"Thank you",okt:"Your signature has been submitted. The letter will appear automatically in the admin system.",
+nf:"Letter not found",nft:"Please check the link or contact the school.",done:"This letter has already been signed.",fail:"Could not submit. Please try again.",legal:"By signing electronically above, I confirm that this electronic signature is valid and carries the same legal effect as my wet / physical signature."}
+};
+let L=localStorage.getItem("lang")||"ms";if(!D[L])L="ms";
+const $=s=>document.querySelector(s),t=k=>D[L][k];
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const id=new URLSearchParams(location.search).get("id");
+let rec=null,state="load";
+
+function paper(){
+  const s=D[L].sch;
+  return `<section class="paper" id="paper"><div class="sch"><img src="semsira.png" alt="" onerror="this.style.display='none'"><div>${s[0]}<br>${s[1]}</div></div>
+<h1>${t("h")}</h1>
+<p>${t("p1")({parent:'<span class="bl">&nbsp;</span>',icP:'<span class="bl">&nbsp;</span>',student:'<span class="bl">&nbsp;</span>',kelas:'<span class="bl">&nbsp;</span>',icS:'<span class="bl">&nbsp;</span>',program:esc(rec.program),lokasi:esc(rec.lokasi),tarikh:esc(rec.tarikh),anjuran:esc(rec.anjuran)})}</p>
+<p>${t("p2")({veh:t("vq")})}</p>
+<p>${t("p3")}</p><p>${t("p4")}</p>
+<div class="ft"><div>${t("f1")} :<div class="blank"></div><br>${t("f2")} : <span class="bl">&nbsp;</span><br>${t("f3")} : <span class="bl">&nbsp;</span><br>${t("f4")} : <span class="bl">&nbsp;</span></div>
+<div>${t("f5")} :<div class="blank" id="sigPreview"></div></div></div></section>`;
+}
+function formHtml(){return `<form class="form" id="f" novalidate><h2>${t("title")}</h2>
+<p style="margin:0;color:var(--mut);font-size:13px">${t("sub")}</p>
+<div class="sigbox">
+  <b style="font-size:13px">${t("sigT")}</b>
+  <canvas id="sig" width="600" height="200"></canvas>
+  <div class="sigbar">
+    <label class="ib file"><i data-lucide="image-up"></i><span>${t("chop")}</span><input type="file" id="chopInput" accept="image/png"></label>
+    <button type="button" class="ib" id="chopClr" hidden><i data-lucide="trash-2"></i>${t("chopClr")}</button>
+    <button type="button" class="ib" id="clr"><i data-lucide="eraser"></i>${t("clear")}</button>
+  </div>
+  <div class="chopPrev" id="chopPrev"></div>
+</div>
+<p style="margin:0;font-size:12.5px;color:var(--mut);background:#fff7e6;border:1px solid #f0d9a8;border-left:4px solid var(--gold);border-radius:6px;padding:10px 12px;text-align:justify">${t("legal")}</p>
+<div id="err"></div><button class="btn" id="go"><i data-lucide="send"></i>${t("send")}</button></form>`}
+
+function draw(){
+  const a=$("#app");document.documentElement.lang=L;
+  document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l==L));
+  if(state=="load")a.innerHTML="";
+  else if(state=="nf")a.innerHTML=`<div class="msg e"><i data-lucide="file-x"></i><h2>${t("nf")}</h2><p>${t("nft")}</p></div>`;
+  else if(state=="done")a.innerHTML=`<div class="msg e"><i data-lucide="check-circle-2"></i><h2>${t("done")}</h2></div>`;
+  else if(state=="ok")a.innerHTML=`<div class="msg"><i data-lucide="check-circle-2"></i><h2>${t("ok")}</h2><p>${t("okt")}</p></div>`;
+  else{a.innerHTML=paper()+formHtml();bind();initCanvas()}
+  lucide.createIcons();
+}
+
+let cv=null,cx=null,drawn=false,pen=false,chopImg=null,chopData=null,sigData=null;
+function drawChopOnTop(){
+  if(!chopImg)return;
+  const w=cv.width*0.38,h=w*chopImg.height/chopImg.width;
+  cx.drawImage(chopImg,cv.width-w-10,cv.height-h-10,w,h);
+}
+function initCanvas(){
+  cv=$("#sig");if(!cv)return;
+  cx=cv.getContext("2d");
+  cx.lineWidth=3.5;cx.lineCap=cx.lineJoin="round";cx.strokeStyle="#0b1f44";
+  const pt=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+  cv.onpointerdown=e=>{pen=true;cv.setPointerCapture(e.pointerId);cx.beginPath();cx.moveTo(...pt(e))};
+  cv.onpointermove=e=>{if(pen){cx.lineTo(...pt(e));cx.stroke();drawn=true}};
+  cv.onpointerup=cv.onpointercancel=()=>pen=false;
+  $("#clr").onclick=()=>{cx.clearRect(0,0,cv.width,cv.height);drawn=false;if(chopImg){drawChopOnTop();drawn=true}};
+  $("#chopInput").addEventListener("change",e=>{
+    const f=e.target.files&&e.target.files[0];if(!f)return;
+    if(f.type!=="image/png"){$("#err").textContent=t("chopBad");e.target.value="";return}
+    const r=new FileReader();
+    r.onload=()=>{
+      chopData=r.result;
+      const i=new Image();
+      i.onload=()=>{
+        chopImg=i;
+        $("#chopPrev").innerHTML=`<img src="${chopData}" alt="chop"><span>${t("chopLoaded")}</span>`;
+        $("#chopClr").hidden=false;
+        // 保存当前已画内容作为签名层
+        sigData=cv.toDataURL("image/png");
+        // 重绘：签名 + 印章
+        const cur=new Image();
+        cur.onload=()=>{cx.clearRect(0,0,cv.width,cv.height);cx.drawImage(cur,0,0,cv.width,cv.height);drawChopOnTop();drawn=true};
+        cur.src=sigData;
+      };
+      i.src=r.result;
+    };
+    r.readAsDataURL(f);
+  });
+  $("#chopClr").onclick=()=>{
+    chopImg=null;chopData=null;$("#chopInput").value="";$("#chopClr").hidden=true;
+    $("#chopPrev").innerHTML="";
+    // 移除印章 = 重新绘制签名（此时画布内容包含旧印章，需先清空）
+    // 简单方案：把当前画布内容视为仅签名（若有旧印章会被一起清空，用户可以重画）
+    // 更稳妥：直接清空并提示
+    cx.clearRect(0,0,cv.width,cv.height);drawn=false;
+  };
+}
+function bind(){
+  $("#f").onsubmit=async e=>{
+    e.preventDefault();
+    if(!drawn){$("#err").textContent=t("needSig");return}
+    const g=$("#go");g.disabled=true;g.textContent=t("sending");
+    try{
+      await updateDoc(doc(db,"pendingSigns",id),{
+        signature:cv.toDataURL("image/png"),
+        signedAt:serverTimestamp()
+      });
+      state="ok";draw();scrollTo(0,0);
+    }catch{
+      $("#err").textContent=t("fail");g.disabled=false;g.textContent=t("send");
+    }
+  };
+}
+$("#lang").onclick=e=>{
+  const l=e.target.dataset.l;
+  if(l&&D[l]){L=l;localStorage.setItem("lang",l);draw()}
+};
+
+draw();
+try{
+  const s=id&&await getDoc(doc(db,"pendingSigns",id));
+  if(!s||!s.exists()){state="nf"}
+  else{rec=s.data();state=rec.signature?"done":"sign"}
+}catch{state="nf"}
+draw();
+</script>
+</body>
+</html>
