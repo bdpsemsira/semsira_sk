@@ -54,6 +54,17 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;p
 .tot{font-size:30px;font-weight:700;color:var(--pri)}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:99}
 .hint{color:var(--mut);font-size:13px;margin:0}
+.sigbox{display:grid;gap:8px}
+.sigbox canvas{background:#fff}
+.sigbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sigbar .file{position:relative;overflow:hidden;display:inline-flex}
+.sigbar .file input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.chopPrev{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut);min-height:20px}
+.chopPrev img{max-height:40px;max-width:80px;object-fit:contain;border:1px solid var(--line);border-radius:4px;background:#fff;padding:2px}
+.pending{background:#fff7e6;border:1px solid #f0d9a8;border-left:4px solid var(--gold);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.pending b{display:block;margin-bottom:6px;color:var(--pri)}
+.pending .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;margin-top:4px}
+.pending .row input{flex:1;min-width:200px;font-size:12px;padding:6px 8px;background:#fff}
 </style>
 </head>
 <body>
@@ -66,8 +77,10 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;p
 <div class="top">
 <div class="stat"><b id="sL">0</b><span data-i="letters"></span></div>
 <div class="stat"><b id="sS">0</b><span data-i="subs"></span></div>
+<div class="stat"><b id="sP">0</b><span data-i="pending"></span></div>
 <button class="btn p" id="add"><i data-lucide="plus"></i><span data-i="new"></span></button>
 </div>
+<div id="pendingBox"></div>
 <div id="list"></div>
 </main>
 
@@ -78,11 +91,29 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;p
 <label><span data-i="lokasi"></span><textarea name="lokasi" rows="2" required></textarea></label>
 <label><span data-i="tarikh"></span><input name="tarikh" required></label>
 <label><span data-i="anjuran"></span><textarea name="anjuran" rows="2" required></textarea></label>
-<div><b style="font-size:13px" data-i="sign"></b><canvas id="sig" width="600" height="200"></canvas>
-<button type="button" class="ib" id="clr" style="margin-top:6px"><i data-lucide="eraser"></i><span data-i="clear"></span></button></div>
-</div><div class="fr"><button type="button" class="btn" data-close data-i="cancel"></button><button class="btn p" data-i="save"></button></div></form></dialog>
+<div class="sigbox">
+  <b style="font-size:13px" data-i="sign"></b>
+  <canvas id="sig" width="600" height="200"></canvas>
+  <div class="sigbar">
+    <label class="ib file" title="Upload"><i data-lucide="image-up"></i><span data-i="chop"></span><input type="file" id="chopInput" accept="image/png"></label>
+    <button type="button" class="ib" id="chopClr" hidden><i data-lucide="trash-2"></i><span data-i="chopClr"></span></button>
+    <button type="button" class="ib" id="clr"><i data-lucide="eraser"></i><span data-i="clear"></span></button>
+  </div>
+  <div class="chopPrev" id="chopPrev"></div>
+</div>
+</div><div class="fr">
+  <button type="button" class="btn" data-close data-i="cancel"></button>
+  <button type="button" class="btn" id="share"><i data-lucide="share-2"></i><span data-i="share"></span></button>
+  <button class="btn p" data-i="save"></button>
+</div></form></dialog>
 
 <dialog id="dS"><div class="dh"><span id="sT"></span><button class="ib" data-close><i data-lucide="x"></i></button></div><div class="db" id="sB"></div></dialog>
+<dialog id="dL"><div class="dh"><span data-i="shareLink"></span><button class="ib" data-close><i data-lucide="x"></i></button></div>
+<div class="db"><p class="hint" data-i="shareHint"></p>
+<div class="lnk"><input id="shareUrl" readonly></div>
+<div class="fr" style="padding:0"><button class="btn p" id="copyShare"><i data-lucide="copy"></i><span data-i="copyBtn"></span></button></div>
+</div></dialog>
+
 <div id="toast"></div>
 
 <script type="module">
@@ -102,15 +133,17 @@ const db=getFirestore(app);
 const CLASSES=["SUMAYYAH","SARAH","KHADIJAH","FATIMAH","ZAINAB","RUQAYYAH","UMMU KALTHOM","AISHAH","AL FARABI","AL GHAZALI","AL KINDI","AL MAWARDI","AL RAZI","IBNU KHALDUN","IBNU RUSH","IBNU SINA"];
 
 const D={
-ms:{title:"Pengurusan Surat Kebenaran",letters:"Surat",subs:"Jumlah penghantaran",new:"Surat baharu",cat:"Kategori (laci)",program:"Program",lokasi:"Lokasi",tarikh:"Tarikh",anjuran:"Anjuran",sign:"Tandatangan & cop Pengetua (lukis di bawah)",clear:"Padam tandatangan",save:"Simpan",cancel:"Batal",edit:"Edit",del:"Padam",copyBtn:"Salin pautan",copied:"Pautan disalin",none:'Belum ada surat kebenaran. Tekan "Surat baharu" untuk mula.',confirm:"Padam surat ini beserta semua penghantaran?",uncat:"Tanpa kategori",total:"Jumlah penghantaran",byClass:"Mengikut kelas",noSubs:"Tiada penghantaran",newT:"Surat baharu",editT:"Edit surat",needSig:"Sila lukis tandatangan",saved:"Disimpan",parent:"Ibu bapa",phone:"Telefon",veh:"Kenderaan",yes:"Ya",no:"Tidak",signed:"Tandatangan",ok:"Sudah",nok:"Belum",stud:"Pelajar",pickClass:"Klik kelas untuk melihat pelajar yang telah menghantar.",
-copyMsg:u=>`Sila pelajar serahkan link di bawah kepada ibu bapa / penjaga untuk mengisikan dan menandatangani surat kebenaran:\n${u}`},
-en:{title:"Consent Letter Management",letters:"Letters",subs:"Total submissions",new:"New letter",cat:"Category (drawer)",program:"Programme",lokasi:"Location",tarikh:"Date",anjuran:"Organiser",sign:"Principal's signature & stamp (draw below)",clear:"Clear signature",save:"Save",cancel:"Cancel",edit:"Edit",del:"Delete",copyBtn:"Copy link",copied:"Link copied",none:'No consent letters yet. Press "New letter" to begin.',confirm:"Delete this letter and all its submissions?",uncat:"Uncategorised",total:"Total submissions",byClass:"By class",noSubs:"No submissions",newT:"New letter",editT:"Edit letter",needSig:"Please draw the signature",saved:"Saved",parent:"Parent",phone:"Phone",veh:"Transport",yes:"Yes",no:"No",signed:"Signed",ok:"Yes",nok:"No",stud:"Student",pickClass:"Tap a class to view submitted students.",
-copyMsg:u=>`Students, please hand the link below to your parent / guardian to fill in and sign the consent letter:\n${u}`}
+ms:{title:"Pengurusan Surat Kebenaran",letters:"Surat",subs:"Jumlah penghantaran",pending:"Menunggu tandatangan",new:"Surat baharu",cat:"Kategori (laci)",program:"Program",lokasi:"Lokasi",tarikh:"Tarikh",anjuran:"Anjuran",sign:"Tandatangan & cop Pengetua (lukis & muat naik di bawah)",clear:"Padam tandatangan",chop:"Muat naik cop (PNG)",chopClr:"Buang cop",chopLoaded:"Cop dimuatkan",chopBad:"Sila pilih fail PNG sahaja",save:"Simpan",cancel:"Batal",edit:"Edit",del:"Padam",copyBtn:"Salin pautan",copied:"Pautan disalin",none:'Belum ada surat kebenaran. Tekan "Surat baharu" untuk mula.',confirm:"Padam surat ini beserta semua penghantaran?",uncat:"Tanpa kategori",total:"Jumlah penghantaran",byClass:"Mengikut kelas",noSubs:"Tiada penghantaran",newT:"Surat baharu",editT:"Edit surat",needSig:"Sila lukis tandatangan atau muat naik cop",saved:"Disimpan",parent:"Ibu bapa",phone:"Telefon",veh:"Kenderaan",yes:"Ya",no:"Tidak",signed:"Tandatangan",ok:"Sudah",nok:"Belum",stud:"Pelajar",pickClass:"Klik kelas untuk melihat pelajar yang telah menghantar.",
+copyMsg:u=>`Sila pelajar serahkan link di bawah kepada ibu bapa / penjaga untuk mengisikan dan menandatangani surat kebenaran:\n${u}`,
+share:"Hantar untuk tandatangan Pengetua",shareHint:"Hantar pautan ini kepada Pengetua / Penolong Kanan untuk menandatangan dan mengecop surat ini. Selepas ditandatangani, surat akan muncul secara automatik dalam senarai.",shareLink:"Pautan untuk Pengetua",shareOk:"Draf dihantar untuk ditandatangani",pendingTitle:"Menunggu tandatangan Pengetua",pendingOpen:"Buka pautan",pendingDel:"Batal draf",shareCopy:"Sila buka pautan ini untuk menandatangani surat kebenaran:",signedLbl:"Ditandatangani pada"},
+en:{title:"Consent Letter Management",letters:"Letters",subs:"Total submissions",pending:"Awaiting signature",new:"New letter",cat:"Category (drawer)",program:"Programme",lokasi:"Location",tarikh:"Date",anjuran:"Organiser",sign:"Principal's signature & stamp (draw & upload below)",clear:"Clear signature",chop:"Upload stamp (PNG)",chopClr:"Remove stamp",chopLoaded:"Stamp loaded",chopBad:"Please choose a valid PNG file",save:"Save",cancel:"Cancel",edit:"Edit",del:"Delete",copyBtn:"Copy link",copied:"Link copied",none:'No consent letters yet. Press "New letter" to begin.',confirm:"Delete this letter and all its submissions?",uncat:"Uncategorised",total:"Total submissions",byClass:"By class",noSubs:"No submissions",newT:"New letter",editT:"Edit letter",needSig:"Please draw the signature or upload a stamp",saved:"Saved",parent:"Parent",phone:"Phone",veh:"Transport",yes:"Yes",no:"No",signed:"Signed",ok:"Yes",nok:"No",stud:"Student",pickClass:"Tap a class to view submitted students.",
+copyMsg:u=>`Students, please hand the link below to your parent / guardian to fill in and sign the consent letter:\n${u}`,
+share:"Send for Principal's signature",shareHint:"Send this link to the Principal / Senior Assistant to sign and stamp this letter. Once signed, the letter will automatically appear in the list.",shareLink:"Link for Principal",shareOk:"Draft sent for signature",pendingTitle:"Awaiting Principal's signature",pendingOpen:"Open link",pendingDel:"Cancel draft",shareCopy:"Please open this link to sign the consent letter:",signedLbl:"Signed on"}
 };
 
 let L=localStorage.getItem("lang")||"ms";
 if(!D[L]) L="ms";
-let letters=[],subs=[];
+let letters=[],subs=[],pendings=[];
 const closed=new Set();
 let editId=null,subId=null,selC=null;
 
@@ -119,6 +152,7 @@ const t=k=>D[L][k]||k;
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const icons=()=>window.lucide&&lucide.createIcons();
 const link=id=>new URL("surat_kebenaran.html?id="+id,location.href).href;
+const signLink=id=>new URL("sign.html?id="+id,location.href).href;
 
 function toast(m){
   const e=$("#toast");
@@ -126,11 +160,9 @@ function toast(m){
   clearTimeout(e._t);
   e._t=setTimeout(()=>e.style.display="none",2600);
 }
-
 async function copyText(txt){
-  try{
-    await navigator.clipboard.writeText(txt);
-  }catch{
+  try{await navigator.clipboard.writeText(txt)}
+  catch{
     const ta=document.createElement("textarea");
     ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";
     document.body.appendChild(ta);ta.select();
@@ -145,6 +177,7 @@ function applyLang(){
   document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l==L));
   render();
   renderSubs();
+  renderPending();
 }
 
 $("#lang").onclick=e=>{
@@ -163,6 +196,30 @@ onSnapshot(collection(db,"submissions"),s=>{
   subs=s.docs.map(d=>({id:d.id,...d.data()}));
   render();
   renderSubs();
+},e=>toast(e.message));
+
+onSnapshot(collection(db,"pendingSigns"),s=>{
+  const list=s.docs.map(d=>({id:d.id,...d.data()}));
+  // 自动处理已签名的：把 signature 转成正式 letter 后删除 pending
+  list.forEach(async p=>{
+    if(p.signature && p.signedAt && !p._migrated){
+      try{
+        await addDoc(collection(db,"letters"),{
+          category:p.category||"",
+          program:p.program,
+          lokasi:p.lokasi,
+          tarikh:p.tarikh,
+          anjuran:p.anjuran,
+          signature:p.signature,
+          createdAt:serverTimestamp()
+        });
+        await deleteDoc(doc(db,"pendingSigns",p.id));
+      }catch(e){console.warn("migrate fail",e)}
+    }
+  });
+  pendings=list.filter(p=>!p.signature);
+  $("#sP").textContent=pendings.length;
+  renderPending();
 },e=>toast(e.message));
 
 /* ---------- Main render ---------- */
@@ -206,6 +263,38 @@ function render(){
 
   icons();
 }
+
+function renderPending(){
+  const box=$("#pendingBox");
+  if(!box) return;
+  if(!pendings.length){box.innerHTML="";return}
+  box.innerHTML=`<div class="pending"><b>${t("pendingTitle")} (${pendings.length})</b>
+    ${pendings.map(p=>{
+      const u=signLink(p.id);
+      return `<div class="row" style="margin-top:8px">
+        <span>${esc(p.program||"")}</span>
+        <input readonly value="${esc(u)}">
+        <button class="ib" data-pa="copy" data-id="${p.id}"><i data-lucide="copy"></i>${t("copyBtn")}</button>
+        <button class="ib d" data-pa="del" data-id="${p.id}"><i data-lucide="trash-2"></i>${t("pendingDel")}</button>
+      </div>`;
+    }).join("")}
+  </div>`;
+  icons();
+}
+
+$("#pendingBox").onclick=async e=>{
+  const b=e.target.closest("[data-pa]");
+  if(!b) return;
+  const p=pendings.find(x=>x.id==b.dataset.id);
+  if(!p) return;
+  if(b.dataset.pa=="copy"){
+    await copyText(t("shareCopy")+"\n"+signLink(p.id));
+    toast(t("copied"));
+  }
+  if(b.dataset.pa=="del"){
+    if(confirm(t("confirm"))) await deleteDoc(doc(db,"pendingSigns",p.id));
+  }
+};
 
 /* 记住抽屉开合状态 */
 $("#list").addEventListener("toggle",e=>{
@@ -300,21 +389,46 @@ document.addEventListener("click",e=>{
   if(c) c.closest("dialog").close();
 });
 
-/* ---------- Signature canvas ---------- */
+/* ---------- Signature + Chop canvas ---------- */
 const cv=$("#sig");
 const cx=cv.getContext("2d");
 let drawn=false,pen=false;
 cx.lineWidth=3.5;cx.lineCap=cx.lineJoin="round";cx.strokeStyle="#0b1f44";
 
+let chopImg=null,chopData=null,sigData=null;
+
 const pt=e=>{
   const r=cv.getBoundingClientRect();
   return [(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height];
 };
+function clearCanvasOnly(){cx.clearRect(0,0,cv.width,cv.height);drawn=false}
+function drawChopOnTop(){
+  if(!chopImg) return;
+  const w=cv.width*0.38;
+  const h=w*chopImg.height/chopImg.width;
+  const x=cv.width-w-10;
+  const y=cv.height-h-10;
+  cx.drawImage(chopImg,x,y,w,h);
+}
+function redrawCombined(){
+  clearCanvasOnly();
+  if(sigData){
+    const i=new Image();
+    i.onload=()=>{
+      cx.drawImage(i,0,0,cv.width,cv.height);
+      drawChopOnTop();
+      drawn=true;
+    };
+    i.src=sigData;
+  }else{
+    drawChopOnTop();
+    if(chopImg) drawn=true;
+  }
+}
+
 cv.onpointerdown=e=>{
-  pen=true;
-  cv.setPointerCapture(e.pointerId);
-  cx.beginPath();
-  cx.moveTo(...pt(e));
+  pen=true;cv.setPointerCapture(e.pointerId);
+  cx.beginPath();cx.moveTo(...pt(e));
 };
 cv.onpointermove=e=>{
   if(pen){cx.lineTo(...pt(e));cx.stroke();drawn=true}
@@ -322,14 +436,53 @@ cv.onpointermove=e=>{
 cv.onpointerup=cv.onpointercancel=()=>pen=false;
 
 $("#clr").onclick=()=>{
-  cx.clearRect(0,0,cv.width,cv.height);
-  drawn=false;
+  clearCanvasOnly();
+  sigData=null;
+  if(chopImg){drawChopOnTop();drawn=true}
 };
 
+$("#chopInput").addEventListener("change",e=>{
+  const f=e.target.files&&e.target.files[0];
+  if(!f) return;
+  if(f.type!=="image/png"){toast(t("chopBad"));e.target.value="";return}
+  const r=new FileReader();
+  r.onload=()=>{
+    chopData=r.result;
+    const i=new Image();
+    i.onload=()=>{
+      chopImg=i;
+      renderChopPreview();
+      const current=cv.toDataURL("image/png");
+      sigData=current;
+      redrawCombined();
+      $("#chopClr").hidden=false;
+      toast(t("chopLoaded"));
+    };
+    i.src=r.result;
+  };
+  r.readAsDataURL(f);
+});
+
+$("#chopClr").onclick=()=>{
+  chopImg=null;chopData=null;
+  $("#chopInput").value="";
+  $("#chopClr").hidden=true;
+  renderChopPreview();
+  sigData=cv.toDataURL("image/png");
+  redrawCombined();
+};
+
+function renderChopPreview(){
+  const p=$("#chopPrev");
+  if(!p) return;
+  p.innerHTML = chopData ? `<img src="${chopData}" alt="chop"><span>${t("chopLoaded")}</span>` : "";
+}
+
+/* ---------- Form open / submit / share ---------- */
 const DEF={
-  program:"NAMA PROGRAM",
-  lokasi:"LOKASI PROGRAM",
-  tarikh:"14, 15, 17 & 18 SEPTEMBER 2026 (ISNIN, SELASA, KHAMIS & JUMAAT), 8.00 PAGI - 2.00 PETANG",
+  program:"KARNIVAL SUKAN TINGKATAN ENAM PERINGKAT NEGERI",
+  lokasi:"KOMPLEKS SUKAN TSP KANGAR, SMK TENGKU SULEIMAN, D'FUTSAL BATU 2 & SMK SYED HASSAN",
+  tarikh:"14, 15, 17 & 18 SEPTEMBER 2026 (ISNIN, SELASA, KHAMIS & JUMAAT)",
   anjuran:"JABATAN PENDIDIKAN NEGERI PERLIS DENGAN KERJASAMA UNIT KOKURIKULUM TINGKATAN ENAM NEGERI PERLIS"
 };
 
@@ -339,18 +492,24 @@ function openForm(l){
   const f=$("#f");
   const v=l||DEF;
   ["category","program","lokasi","tarikh","anjuran"].forEach(k=>f[k].value=v[k]||"");
-  cx.clearRect(0,0,cv.width,cv.height);
+  clearCanvasOnly();
   drawn=false;
+  sigData=null;
+  chopImg=null;chopData=null;
+  $("#chopInput").value="";
+  $("#chopClr").hidden=true;
+  renderChopPreview();
   $("#dF").showModal();
   if(l?.signature){
-    const i=new Image();
-    i.onload=()=>{cx.drawImage(i,0,0);drawn=true};
-    i.src=l.signature;
+    sigData=l.signature;
+    redrawCombined();
+    drawn=true;
   }
 }
 
 $("#add").onclick=()=>openForm();
 
+/* 保存（正常保存到 letters） */
 $("#f").onsubmit=async e=>{
   e.preventDefault();
   if(!drawn) return toast(t("needSig"));
@@ -365,6 +524,33 @@ $("#f").onsubmit=async e=>{
   }catch(err){
     toast(err.message);
   }
+};
+
+/* 分享给校长签名 */
+$("#share").onclick=async()=>{
+  const f=$("#f");
+  const data={};
+  ["category","program","lokasi","tarikh","anjuran"].forEach(k=>data[k]=(f[k].value||"").trim());
+  if(!data.program||!data.lokasi||!data.tarikh||!data.anjuran){
+    return toast(t("req")||"Sila lengkapkan semua ruangan.");
+  }
+  try{
+    const ref=await addDoc(collection(db,"pendingSigns"),{
+      ...data,
+      createdAt:serverTimestamp()
+    });
+    $("#dF").close();
+    $("#shareUrl").value=signLink(ref.id);
+    $("#dL").showModal();
+    toast(t("shareOk"));
+  }catch(err){
+    toast(err.message);
+  }
+};
+
+$("#copyShare").onclick=async()=>{
+  await copyText(t("shareCopy")+"\n"+$("#shareUrl").value);
+  toast(t("copied"));
 };
 
 applyLang();
