@@ -60,7 +60,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;p
 <header><div class="hd">
 <img src="semsira.png" alt="SEMSIRA" onerror="this.style.display='none'">
 <div><h1 data-i="title"></h1><small>SMK Syed Sirajuddin Jejawi, Arau, Perlis</small></div>
-<div class="lang" id="lang"><button data-l="ms">BM</button><button data-l="en">EN</button><button data-l="zh">中文</button></div>
+<div class="lang" id="lang"><button data-l="ms">BM</button><button data-l="en">EN</button></div>
 </div></header>
 <main>
 <div class="top">
@@ -105,12 +105,11 @@ const D={
 ms:{title:"Pengurusan Surat Kebenaran",letters:"Surat",subs:"Jumlah penghantaran",new:"Surat baharu",cat:"Kategori (laci)",program:"Program",lokasi:"Lokasi",tarikh:"Tarikh",anjuran:"Anjuran",sign:"Tandatangan & cop Pengetua (lukis di bawah)",clear:"Padam tandatangan",save:"Simpan",cancel:"Batal",edit:"Edit",del:"Padam",copyBtn:"Salin pautan",copied:"Pautan disalin",none:'Belum ada surat kebenaran. Tekan "Surat baharu" untuk mula.',confirm:"Padam surat ini beserta semua penghantaran?",uncat:"Tanpa kategori",total:"Jumlah penghantaran",byClass:"Mengikut kelas",noSubs:"Tiada penghantaran",newT:"Surat baharu",editT:"Edit surat",needSig:"Sila lukis tandatangan",saved:"Disimpan",parent:"Ibu bapa",phone:"Telefon",veh:"Kenderaan",yes:"Ya",no:"Tidak",signed:"Tandatangan",ok:"Sudah",nok:"Belum",stud:"Pelajar",pickClass:"Klik kelas untuk melihat pelajar yang telah menghantar.",
 copyMsg:u=>`Sila pelajar serahkan link di bawah kepada ibu bapa / penjaga untuk mengisikan dan menandatangani surat kebenaran:\n${u}`},
 en:{title:"Consent Letter Management",letters:"Letters",subs:"Total submissions",new:"New letter",cat:"Category (drawer)",program:"Programme",lokasi:"Location",tarikh:"Date",anjuran:"Organiser",sign:"Principal's signature & stamp (draw below)",clear:"Clear signature",save:"Save",cancel:"Cancel",edit:"Edit",del:"Delete",copyBtn:"Copy link",copied:"Link copied",none:'No consent letters yet. Press "New letter" to begin.',confirm:"Delete this letter and all its submissions?",uncat:"Uncategorised",total:"Total submissions",byClass:"By class",noSubs:"No submissions",newT:"New letter",editT:"Edit letter",needSig:"Please draw the signature",saved:"Saved",parent:"Parent",phone:"Phone",veh:"Transport",yes:"Yes",no:"No",signed:"Signed",ok:"Yes",nok:"No",stud:"Student",pickClass:"Tap a class to view submitted students.",
-copyMsg:u=>`Students, please hand the link below to your parent / guardian to fill in and sign the consent letter:\n${u}`},
-zh:{title:"同意书管理",letters:"同意书",subs:"提交总数",new:"新增同意书",cat:"分类（抽屉）",program:"活动名称",lokasi:"地点",tarikh:"日期",anjuran:"主办单位",sign:"校长签名与印章（在下方手绘）",clear:"清除签名",save:"保存",cancel:"取消",edit:"编辑",del:"删除",copyBtn:"复制链接",copied:"链接已复制",none:"还没有同意书，点击“新增同意书”开始。",confirm:"删除此同意书及其所有提交记录？",uncat:"未分类",total:"提交总数",byClass:"按班级",noSubs:"暂无提交",newT:"新增同意书",editT:"编辑同意书",needSig:"请先手绘签名",saved:"已保存",parent:"家长",phone:"电话",veh:"交通",yes:"同意",no:"不同意",signed:"签名",ok:"已签",nok:"未签",stud:"学生",pickClass:"点击班级查看已提交学生。",
-copyMsg:u=>`请学生把下面的链接交给家长／监护人，用于填写并签署同意书：\n${u}`}
+copyMsg:u=>`Students, please hand the link below to your parent / guardian to fill in and sign the consent letter:\n${u}`}
 };
 
 let L=localStorage.getItem("lang")||"ms";
+if(!D[L]) L="ms";
 let letters=[],subs=[];
 const closed=new Set();
 let editId=null,subId=null,selC=null;
@@ -132,7 +131,6 @@ async function copyText(txt){
   try{
     await navigator.clipboard.writeText(txt);
   }catch{
-    // 退化方案：旧浏览器 / 非 HTTPS
     const ta=document.createElement("textarea");
     ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";
     document.body.appendChild(ta);ta.select();
@@ -151,7 +149,7 @@ function applyLang(){
 
 $("#lang").onclick=e=>{
   const l=e.target.dataset.l;
-  if(l){L=l;localStorage.setItem("lang",l);applyLang()}
+  if(l&&D[l]){L=l;localStorage.setItem("lang",l);applyLang()}
 };
 
 /* ---------- Firestore listeners ---------- */
@@ -226,7 +224,6 @@ $("#list").onclick=async e=>{
   if(!l) return;
 
   if(a=="copy"){
-    // ✅ 复制：提示语 + 换行 + 链接
     await copyText(t("copyMsg")(link(l.id)));
     toast(t("copied"));
   }
@@ -330,9 +327,9 @@ $("#clr").onclick=()=>{
 };
 
 const DEF={
-  program:"KARNIVAL SUKAN TINGKATAN ENAM PERINGKAT NEGERI",
-  lokasi:"KOMPLEKS SUKAN TSP KANGAR, SMK TENGKU SULEIMAN, D'FUTSAL BATU 2 & SMK SYED HASSAN",
-  tarikh:"14, 15, 17 & 18 SEPTEMBER 2026 (ISNIN, SELASA, KHAMIS & JUMAAT)",
+  program:"NAMA PROGRAM",
+  lokasi:"LOKASI PROGRAM",
+  tarikh:"14, 15, 17 & 18 SEPTEMBER 2026 (ISNIN, SELASA, KHAMIS & JUMAAT), 8.00 PAGI - 2.00 PETANG",
   anjuran:"JABATAN PENDIDIKAN NEGERI PERLIS DENGAN KERJASAMA UNIT KOKURIKULUM TINGKATAN ENAM NEGERI PERLIS"
 };
 
